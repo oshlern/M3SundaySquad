@@ -8,9 +8,8 @@ factors = [financial, health, mental, social]
 weights = []
 #hopefully we will have some way to quantify these things
 
-def metric(factors)
+def metric(factors) {
     me = 0
     for i in range(len(factors)):
         weights[i]*factors[i]
-
-def 
+}

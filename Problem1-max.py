@@ -1,10 +1,10 @@
 
 
 import pandas as pd
-import numpy as np
+# import numpy as np
 import matplotlib.pyplot as plt
-from tabulate import tabulate
-import sys
+# from tabulate import tabulate
+# import sys
 
 def load_csv(path, year, years):
     bad_data = pd.read_csv(path).reindex(years[year].keys(), axis=1).fillna('*')
@@ -16,20 +16,8 @@ def load_csv(path, year, years):
         for entry in bad_data[question]:
             x1 = years[year]
             x2 = x1[question]
-            # print(entry, type(entry), entry == float('nan'), years[year][question])
             x3 = x2[entry]
             data[question].append(x3)
-            #[years[year][question][entry] for entry in bad_data[question]]
-        # except KeyError:
-        #     print("question {}, year {}".format(question, year))
-    # data.reindex(years[year].keys(), axis=1).fillna('*')
-    # data[data.columns[0]] = data[data.columns[0]].apply(lambda x: 0 if x == "**" else int(x)+8)
-    # seen = []
-    # for i, x in enumerate(data[data.columns[1]]):
-    #     # if type(x) != str:
-    #     #     print(i, x)
-    #     if not x in seen:
-    #         seen.append(x)
     return data
 
 years = {
@@ -80,7 +68,7 @@ years = {
         'qn2': {'*': '<Missing>', 1: 'Female', 2: 'Male'}, # Sex
         'qn3': {'*': '<Missing>', 1: 6, 2: 7, 3: 8, 4: 9, 5: 10, 6: 11, 7: 12, 8: '<Missing>'}, # Grade
         'qn7': {'*': '<Missing>', 1: True, 2: False}, # Tried cigarette smkg, even 1 or 2 puffs
-        'qn36h': {'*': False, 1: True} # EVER TRIED: e-cigt (e.g. Ruyan)
+        'qn16h': {'*': False, 1: True} # EVER TRIED: e-cigt (e.g. Ruyan)
     },
 }
 
@@ -96,5 +84,48 @@ files = {
 
 data = {year: load_csv(files[year], year, years) for year in files}
 
-# data {'2017': {'Q1': [entries]}}
 
+def get_percent(year,question):
+    filtered = list(filter(lambda x: isinstance(x, bool), data[year][question]))
+    # filtered = [1 if (isinstance(x,bool) and x) else 0 for x in filtered]
+    return float(sum(filtered))/float(len(filtered))
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.set_xlabel('Year')
+ax.set_ylabel('Percent')
+
+
+graph_e = [get_percent('2017', 'Q28'), get_percent('2016', 'Q26'), get_percent('2015', 'q28'), get_percent('2014', 'qn31'), get_percent('2013', 'qn36i'), get_percent('2012', 'qn37g'), get_percent('2011', 'qn16h')]
+graph_c = [get_percent('2017', 'Q7'), get_percent('2016', 'Q7'), get_percent('2015', 'q6'), get_percent('2014', 'qn7'), get_percent('2013', 'qn9'), get_percent('2012', 'qn7'), get_percent('2011', 'qn7')]
+graph_years = [2017, 2016, 2015, 2014, 2013, 2012, 2011]
+
+print(graph_e)
+
+ax.plot(graph_years, graph_e, color = 'r')
+ax.plot(graph_years, graph_c, color = 'b')
+
+fig.savefig('graphs/problem10.svg')
+
+from sklearn import linear_model
+from sklearn.metrics import mean_squared_error, r2_score
+def reformat(mylist):
+    reformatted = []
+    for x in mylist:
+        reformatted.append([x])
+    return reformatted
+
+cigs = linear_model.LinearRegression()
+cigs.fit(reformat(graph_years), reformat(graph_c))
+pred = cigs.predict(reformat(graph_years))
+
+ax.plot(graph_years, pred, color = 'k')
+
+ecigs = linear_model.LinearRegression()
+ecigs.fit(reformat(graph_years), reformat(graph_e))
+pred = ecigs.predict(reformat(graph_years))
+
+ax.plot(graph_years, pred, color = 'y')
+
+fig.savefig('graphs/problem100.svg')
+# data {'2017': {'Q1': [entries]}}

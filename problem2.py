@@ -2,11 +2,11 @@ problem2 = """Above or Under the Influence?—Like nicotine, the abuse of most s
 and external factors that affect the likelihood of an individual becoming addicted. Create a model that simulates the
 likelihood that a given individual will use a given substance. Take into account social influence and characteristic traits
 (e.g., social circles, genetics, health issues, income level, and/or any other relevant factors) as well as characteristics
-of the drug itself. Demonstrate how your model works by predicting how many students among a class of 300 high
-
-school seniors with varying characteristics will use the following substances: 
+of the drug itself. Demonstrate how your model works by predicting how many students among a class of 300 high school seniors with varying characteristics will use the following substances: 
 nicotine, marijuana, alcohol, and un-
 prescribed opioids."""
+
+# we assume our individuals exist in 2017
 
 import numpy as np
 import pandas as pd
@@ -18,7 +18,7 @@ row_format_1 = {'Total':0, 'Male':1, 'Female':2, 'Not Hispanic or Latino':3, 'Wh
 row_format_2 = {'Total':0, 'Northeast':1, 'Midwest':2, 'South':3, 'West':4, 'Large Metro':5, 'Small Metro':6, 'Nonmetro':7, 'Urbanized':8, 'Less Urbanized':9, 'Completely Rural':10,
                 'Less Than 100%':11, '100-199%':12, '200% or More':13, 'Private':14, 'Medicaid/CHIP':15, 'Other':16, 'No Coverage':17}
 
-opioid_misues = pd.read_csv('data/Opiod Misues 2017.csv')
+opioid_misuse = pd.read_csv('data/Opiod Misues 2017.csv')
 marijuana_use = pd.read_csv('data/Marijuana Use 2017.csv')
 
 from sklearn import linear_model
@@ -29,7 +29,7 @@ def reformat(mylist):
         reformatted.append([x])
     return reformatted
 
-#print(opioid_misues["Aged 12-17 (2017)"].map(lambda x: x.lstrip('*').rstrip('abcd') + '0').astype(float))
+#print(opioid_misuse["Aged 12-17 (2017)"].map(lambda x: x.lstrip('*').rstrip('abcd') + '0').astype(float))
 
 attributes_12_17 = {'Nicotine':{
     'Total':0, 'Male':0, 'Female':0, 'Not Hispanic or Latino':0, 'White':0, 'Black or African American':0, 'American Indian or Alaska Native':0, 'Native Hawaiian or Other Pacific Islander':0, 'Asian':0, 'Two or More Races':0, 'Hispanic or Latino':0, 
@@ -64,8 +64,8 @@ age = 'Aged 12-17 (2017)'
 nicotine = clean_column(pd.read_csv('data/Nicotine Use 2017.csv')[age])
 reformat_data(nicotine, attributes_12_17['Nicotine'])
 
-nicotine = clean_column(pd.read_csv('data/Marijuana Use 2017.csv')[age])
-reformat_data(nicotine, attributes_12_17['Marijuana'])
+marijuana = clean_column(pd.read_csv('data/Marijuana Use 2017.csv')[age])
+reformat_data(marijuana, attributes_12_17['Marijuana'])
 
 nicotine = clean_column(pd.read_csv('data/Alchohol Use 2017.csv')[age])
 reformat_data(nicotine, attributes_12_17['Alchohol'])
@@ -98,11 +98,44 @@ def reformatRows(df):
     return mydata
 
 from sklearn import tree
-X = reformatRows()
-Y = 
-line = linear_model.Linear_Regression()
-line.fit(X,Y)
-logistic = linear_model.LogisticRegression()
-me = tree.DecisionTreeClassifier()
-me.fit(X, Y)
+# X = reformatRows()
+# Y = 
+# line = linear_model.Linear_Regression()
+# line.fit(X,Y)
+# logistic = linear_model.LogisticRegression()
+# me = tree.DecisionTreeClassifier()
+# me.fit(X, Y)
 
+
+labels = {
+    'male': 'Male', 'female': 'Female', 'not hispanic': 'Not Hispanic or Latino', 'white': 'White',
+    'african american': 'Black or African American', 'native american': 'American Indian or Alaska Native',
+    'pacific islander': 'Native Hawaiian or Other Pacific Islander', 'asian': 'Asian',
+    'mexican': 'Hispanic or Latino','puerto rican': 'Hispanic or Latino', 'cuban': 'Hispanic or Latino', 'other hispanic': 'Hispanic or Latino'
+}
+    #'Northeast':1, 'Midwest':2, 'South':3, 'West':4, 'Large Metro':5, 'Small Metro':6, 
+    #'Nonmetro':7, 'Urbanized':8, 'Less Urbanized':9, 'Completely Rural':10, 'Less Than 100%':11, '100-199%':12, '200% or More':13, 'Private':14, 'Medicaid/CHIP':15, 'Other':16, 'No Coverage':17
+drug_data = {}
+demographics = {}
+
+dem_data = pd.read_csv("data/Demographics.csv")
+keys = dem_data[dem_data.columns[0]]
+for i in range(len(dem_data['2017'])):
+    demographics[labels[keys[i]]] = dem_data['2017'][i]
+
+
+# 15.8% seniors
+total = 'Total'
+
+def predict(person):
+    p_total = drug_data[person['age']][total] # begin with a generic person with no traits
+    for trait in person:
+        if trait == 'age': # age is linked to every other trait so we ignore it
+            continue
+        # p_of_trait = float(person[trait])/100
+        p_trait = drug_data[person['age']][person] / drug_data[person['age']][total]
+        p_total *= p_trait
+    return p_total
+
+ def seniors():
+        
