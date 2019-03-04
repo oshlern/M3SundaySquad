@@ -12,14 +12,15 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
+import random
 
 row_format_1 = {'Total':0, 'Male':1, 'Female':2, 'Not Hispanic or Latino':3, 'White':4, 'Black or African American':5, 'American Indian or Alaska Native':6, 'Native Hawaiian or Other Pacific Islander':7, 'Asian':8, 'Two or More Races':9, 'Hispanic or Latino':10, 
                 "< High School":11, 'High School Graduate':12, 'Some College/Associate\'s Degree':13, 'College Graduate':14, 'Full-Time':15, 'Part-Time':16, 'Unemployed':17, 'Other':18}
 row_format_2 = {'Total':0, 'Northeast':1, 'Midwest':2, 'South':3, 'West':4, 'Large Metro':5, 'Small Metro':6, 'Nonmetro':7, 'Urbanized':8, 'Less Urbanized':9, 'Completely Rural':10,
                 'Less Than 100%':11, '100-199%':12, '200% or More':13, 'Private':14, 'Medicaid/CHIP':15, 'Other':16, 'No Coverage':17}
 
-opioid_misuse = pd.read_csv('data/Opiod Misues 2017.csv')
-marijuana_use = pd.read_csv('data/Marijuana Use 2017.csv')
+# opioid_misuse = pd.read_csv('data/Opioid Misuse 2017.csv')
+# marijuana_use = pd.read_csv('data/Marijuana Use 2017.csv')
 
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
@@ -39,7 +40,7 @@ attributes_12_17 = {'Nicotine':{
     'Total':0, 'Male':0, 'Female':0, 'Not Hispanic or Latino':0, 'White':0, 'Black or African American':0, 'American Indian or Alaska Native':0, 'Native Hawaiian or Other Pacific Islander':0, 'Asian':0, 'Two or More Races':0, 'Hispanic or Latino':0, 
     "< High School":0, 'High School Graduate':0, 'Some College/Associate\'s Degree':0, 'College Graduate':0, 'Full-Time':0, 'Part-Time':0, 'Unemployed':0, 'Other':0, 'Northeast':1, 'Midwest':2, 'South':3, 'West':4, 'Large Metro':5, 'Small Metro':6, 
     'Nonmetro':7, 'Urbanized':8, 'Less Urbanized':9, 'Completely Rural':10, 'Less Than 100%':11, '100-199%':12, '200% or More':13, 'Private':14, 'Medicaid/CHIP':15, 'Other':16, 'No Coverage':17
-}, 'Alchohol':{
+}, 'Alcohol':{
     'Total':0, 'Male':0, 'Female':0, 'Not Hispanic or Latino':0, 'White':0, 'Black or African American':0, 'American Indian or Alaska Native':0, 'Native Hawaiian or Other Pacific Islander':0, 'Asian':0, 'Two or More Races':0, 'Hispanic or Latino':0, 
     "< High School":0, 'High School Graduate':0, 'Some College/Associate\'s Degree':0, 'College Graduate':0, 'Full-Time':0, 'Part-Time':0, 'Unemployed':0, 'Other':0, 'Northeast':1, 'Midwest':2, 'South':3, 'West':4, 'Large Metro':5, 'Small Metro':6, 
     'Nonmetro':7, 'Urbanized':8, 'Less Urbanized':9, 'Completely Rural':10, 'Less Than 100%':11, '100-199%':12, '200% or More':13, 'Private':14, 'Medicaid/CHIP':15, 'Other':16, 'No Coverage':17
@@ -60,6 +61,7 @@ def clean_column(column):
         return column.map(lambda x: '0' + x.lstrip('*abcd').rstrip('*abcd')).astype(float)
     except:
         return column
+
 age = 'Aged 12-17 (2017)'
 nicotine = clean_column(pd.read_csv('data/Nicotine Use 2017.csv')[age])
 reformat_data(nicotine, attributes_12_17['Nicotine'])
@@ -67,25 +69,25 @@ reformat_data(nicotine, attributes_12_17['Nicotine'])
 marijuana = clean_column(pd.read_csv('data/Marijuana Use 2017.csv')[age])
 reformat_data(marijuana, attributes_12_17['Marijuana'])
 
-nicotine = clean_column(pd.read_csv('data/Alchohol Use 2017.csv')[age])
-reformat_data(nicotine, attributes_12_17['Alchohol'])
+alcohol = clean_column(pd.read_csv('data/Alcohol Use 2017.csv')[age])
+reformat_data(alcohol, attributes_12_17['Alcohol'])
 
-nicotine = clean_column(pd.read_csv('data/Opiod Misues 2017.csv')[age])
-reformat_data(nicotine, attributes_12_17['Opioid'])
+opioid = clean_column(pd.read_csv('data/Opioid Misuse 2017.csv')[age])
+reformat_data(opioid, attributes_12_17['Opioid'])
 
-nicotine = clean_column(pd.read_csv('data/Nicotine Use 2017 SES.csv')[age])
-reformat_data(nicotine, attributes_12_17['Nicotine'], row_format_2)
+nicotine_ses = clean_column(pd.read_csv('data/Nicotine Use 2017 SES.csv')[age])
+reformat_data(nicotine_ses, attributes_12_17['Nicotine'], row_format_2)
 
-nicotine = clean_column(pd.read_csv('data/Marijuana Use 2017 SES.csv')[age])
-reformat_data(nicotine, attributes_12_17['Marijuana'], row_format_2)
+marijuana_ses = clean_column(pd.read_csv('data/Marijuana Use 2017 SES.csv')[age])
+reformat_data(marijuana_ses, attributes_12_17['Marijuana'], row_format_2)
 
-nicotine = clean_column(pd.read_csv('data/Alchohol Use 2017 SES.csv')[age])
-reformat_data(nicotine, attributes_12_17['Alchohol'], row_format_2)
+alcohol_ses = clean_column(pd.read_csv('data/Alcohol Use 2017 SES.csv')[age])
+reformat_data(alcohol_ses, attributes_12_17['Alcohol'], row_format_2)
 
-nicotine = clean_column(pd.read_csv('data/Opioid Misues 2017 SES.csv')[age])
-reformat_data(nicotine, attributes_12_17['Opioid'], row_format_2)
+opioid_ses = clean_column(pd.read_csv('data/Opioid Misuse 2017 SES.csv')[age])
+reformat_data(opioid_ses, attributes_12_17['Opioid'], row_format_2)
 
-print(attributes_12_17)
+# print(attributes_12_17)
 
 def reformatRows(df):
     """assumes all variables are within a single data frame and each variable has its own column"""
@@ -107,35 +109,72 @@ from sklearn import tree
 # me.fit(X, Y)
 
 
-labels = {
-    'male': 'Male', 'female': 'Female', 'not hispanic': 'Not Hispanic or Latino', 'white': 'White',
-    'african american': 'Black or African American', 'native american': 'American Indian or Alaska Native',
-    'pacific islander': 'Native Hawaiian or Other Pacific Islander', 'asian': 'Asian',
-    'mexican': 'Hispanic or Latino','puerto rican': 'Hispanic or Latino', 'cuban': 'Hispanic or Latino', 'other hispanic': 'Hispanic or Latino'
-}
+# labels = {
+#     'male': 'Male', 'female': 'Female', 'not hispanic': 'Not Hispanic or Latino', 'white': 'White',
+#     'african american': 'Black or African American', 'native american': 'American Indian or Alaska Native',
+#     'pacific islander': 'Native Hawaiian or Other Pacific Islander', 'asian': 'Asian',
+#     'mexican': 'Hispanic or Latino','puerto rican': 'Hispanic or Latino', 'cuban': 'Hispanic or Latino', 'other hispanic': 'Hispanic or Latino'
+# }
     #'Northeast':1, 'Midwest':2, 'South':3, 'West':4, 'Large Metro':5, 'Small Metro':6, 
     #'Nonmetro':7, 'Urbanized':8, 'Less Urbanized':9, 'Completely Rural':10, 'Less Than 100%':11, '100-199%':12, '200% or More':13, 'Private':14, 'Medicaid/CHIP':15, 'Other':16, 'No Coverage':17
-drug_data = {}
-demographics = {}
+# demographics = {}
 
-dem_data = pd.read_csv("data/Demographics.csv")
-keys = dem_data[dem_data.columns[0]]
-for i in range(len(dem_data['2017'])):
-    demographics[labels[keys[i]]] = dem_data['2017'][i]
-
-
+# dem_data = pd.read_csv("data/Demographics.csv")
+# keys = dem_data[dem_data.columns[0]]
+# for i in range(len(dem_data['2017'])):
+#     demographics[labels[keys[i]]] = dem_data['2017'][i]
 # 15.8% seniors
-total = 'Total'
 
-def predict(person):
-    p_total = drug_data[person['age']][total] # begin with a generic person with no traits
+age_groups = {'12': 'Aged 12-17 (2017)', '13': 'Aged 12-17 (2017)', '14': 'Aged 12-17 (2017)', '15': 'Aged 12-17 (2017)', '16': 'Aged 12-17 (2017)', '17': 'Aged 12-17 (2017)', '18': 'Aged 18-25 (2017)'}
+drugs  = attributes_12_17#{'nicotine': nicotine_data}
+drugs_by_age_data = pd.read_csv("data/use_by_age_2016_2017.csv")
+labels = {'Nicotine': 'tobacco misuse in past year (2017)', 'Alcohol': 'alcohol past year (2017)', 'Marijuana': 'marijuana past year (2017)', 'Opioid': 'opioids past year (2017)'}
+drugs_by_age = {}
+age_column = drugs_by_age_data[drugs_by_age_data.columns[0]]
+for drug in labels:
+    drugs_by_age[drug] = {}
+    for i in range(len(age_column)):
+        drugs_by_age[age_column[i]] = drugs_by_age_data[labels[drug]][i]
+
+def predict(drug, person):
+    drug_data = drugs[drug]
+    p_total = float(drugs_by_age[person['age']])/100 # begin with a generic person in the age group with no traits
     for trait in person:
-        if trait == 'age': # age is linked to every other trait so we ignore it
+        if trait == 'age' or trait == 'age_group': # age is linked to every other trait so we ignore it
             continue
         # p_of_trait = float(person[trait])/100
-        p_trait = drug_data[person['age']][person] / drug_data[person['age']][total]
-        p_total *= p_trait
+        age_group = age_groups[person['age']]
+        p_age_group_average = float(drug_data['Total'])/100
+        p_age_group_trait = float(drug_data[person[trait]])/100
+        p_total *= p_age_group_trait / p_age_group_average # modify probability by the prevalence of drug usae by people with the trait
+        # print(p_age_group_trait / p_age_group_average)
     return p_total
 
- def seniors():
+traits = {
+        'sex': ['Male', 'Female'] , 'hispanic': ['Hispanic or Latino', 'Not Hispanic or Latino'],
+        'race': ['White', 'Black or African American', 'American Indian or Alaska Native', 'Native Hawaiian or Other Pacific Islander', 'Asian'],
+        'region': ['Northeast',  'Midwest', 'South', 'West'],
+        'metro': ['Large Metro', 'Small Metro', 'Nonmetro'],
+        'urban': ['Urbanized', 'Less Urbanized', 'Completely Rural'],
+        'poverty': ['Less Than 100%', '100-199%', '200% or More'],
+        'healthcare': ['Private', 'Medicaid/CHIP', 'Other', 'No Coverage']
+    }
+
+def generate_person(age):
+    person = {'age': str(age)}
+    for trait in traits:
+        person[trait] = random.choice(traits[trait])
+    return person
+
+def seniors():
+    age = 17
+    predictions = {drug: 0 for drug in drugs}
+    for i in range(300):
+        person = generate_person(age)
+        for drug in drugs:
+            p_drug = predict(drug, person)
+            predictions[drug] += p_drug
+    return predictions
+
+print(seniors())
         

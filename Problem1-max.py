@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 # from tabulate import tabulate
 # import sys
 
+
+# reads the files provided by the path and formats them into a pandas dataframe that we can use
 def load_csv(path, year, years):
     bad_data = pd.read_csv(path).reindex(years[year].keys(), axis=1).fillna('*')
     data = {}
@@ -19,6 +21,8 @@ def load_csv(path, year, years):
             x3 = x2[entry]
             data[question].append(x3)
     return data
+
+
 
 years = {
     '2017': {
@@ -109,11 +113,13 @@ fig.savefig('graphs/problem10.svg')
 
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
+
 def reformat(mylist):
     reformatted = []
     for x in mylist:
         reformatted.append([x])
     return reformatted
+
 
 cigs = linear_model.LinearRegression()
 cigs.fit(reformat(graph_years), reformat(graph_c))
@@ -128,4 +134,6 @@ pred = ecigs.predict(reformat(graph_years))
 ax.plot(graph_years, pred, color = 'y')
 
 fig.savefig('graphs/problem100.svg')
+
+
 # data {'2017': {'Q1': [entries]}}
