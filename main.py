@@ -7,17 +7,6 @@ growth of this new form of nicotine use compares to that of cigarettes."""
 
 
 
-problem2 = """Above or Under the Influence?—Like nicotine, the abuse of most substances is correlated with numerous internal
-and external factors that affect the likelihood of an individual becoming addicted. Create a model that simulates the
-likelihood that a given individual will use a given substance. Take into account social influence and characteristic traits
-(e.g., social circles, genetics, health issues, income level, and/or any other relevant factors) as well as characteristics
-of the drug itself. Demonstrate how your model works by predicting how many students among a class of 300 high
-
-school seniors with varying characteristics will use the following substances: 
-nicotine, marijuana, alcohol, and un-
-prescribed opioids."""
-
-
 problem3 = """Ripples—Develop a robust metric for the impact of substance use. Take into account both financial and non-financial
 factors, and use your metric to rank the substances mentioned in question #2."""
 
@@ -74,22 +63,32 @@ def format_selection (drug, time_period, grade):
 
     return data_points
 
+def plot_selection(ax, drug, time_period):
+    for grade in grades:
+        formatted_selection = format_selection(drug, time_period, grade)
+        ax.plot(formatted_selection[0], formatted_selection[1], colors[grade], label=grade)
+    ax.set_xlabel('years')
+    ax.set_ylabel('percent')
+    ax.set_title('Usage of {} in {}'.format(drug, time_period))
+    ax.set_ylim([0,100])
+    ax.legend()
 
 drug = 'Any Vaping'
 time_period = 'Past Month'
 
 
 fig = plt.figure()
-ax = fig.add_subplot(111)
-for grade in grades:
-    formatted_selection = format_selection(drug, time_period, grade)
-    ax.plot(formatted_selection[0], formatted_selection[1], colors[grade], label=grade)
+ax1 = fig.add_subplot(121)
+ax2 = fig.add_subplot(122)
+plot_selection(ax1, 'Any Vaping', 'Past Month')
+plot_selection(ax2, 'Cigarettes (any use)', 'Past Month')
+
+
+
 
 # ax.plot(years, data_points)
-ax.set_xlabel('years')
-ax.set_ylabel('percent used {} in {}'.format(drug, time_period))
-ax.legend()
-# fig.savefig('test.svg')
+
+# fig.savefig('graphs/test.svg')
 if display:
     print("displaying")
     plt.show()
